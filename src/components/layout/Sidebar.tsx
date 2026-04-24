@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useUser, useClerk } from '@clerk/react'
-import viteLogo from '../../assets/vite.svg'
 import styles from './Sidebar.module.css'
 
 function IconDashboard() {
@@ -60,7 +59,7 @@ export default function Sidebar() {
     <>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <img src={viteLogo} alt="" className={styles.brandMark} />
+          <img src="/logo/esimplify-logo.png" alt="eSimplify" className={styles.brandMark} />
           <span className={styles.brandName}>eSimplify</span>
         </div>
 
