@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom'
+import { useState } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useUser, useClerk } from '@clerk/react'
 import viteLogo from '../../assets/vite.svg'
 import styles from './Sidebar.module.css'
@@ -16,9 +17,18 @@ function IconDashboard() {
 
 function IconLogOut() {
   return (
-    <svg className={styles.navIcon} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
       <path d="M6.5 9h8M11.5 6l3 3-3 3" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M11 3.5H3.5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1H11" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function IconUser() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="9" cy="6" r="3" />
+      <path d="M2.5 15.5c0-3.314 2.91-6 6.5-6s6.5 2.686 6.5 6" strokeLinecap="round" />
     </svg>
   )
 }
@@ -26,6 +36,8 @@ function IconLogOut() {
 export default function Sidebar() {
   const { user } = useUser()
   const { signOut } = useClerk()
+  const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const firstName = user?.firstName ?? ''
   const lastName = user?.lastName ?? ''
@@ -34,57 +46,86 @@ export default function Sidebar() {
   const initials = ([firstName[0], lastName[0]].filter(Boolean).join('').toUpperCase()) || (email[0]?.toUpperCase() ?? 'U')
   const imageUrl = user?.imageUrl
 
+  function handleProfile() {
+    setMenuOpen(false)
+    navigate('/profile')
+  }
+
+  function handleSignOut() {
+    setMenuOpen(false)
+    signOut({ redirectUrl: '/' })
+  }
+
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.brand}>
-        <img src={viteLogo} alt="" className={styles.brandMark} />
-        <span className={styles.brandName}>eSimplify</span>
-      </div>
-
-      <nav className={styles.nav}>
-        <div className={styles.navSection}>
-          <div className={styles.navSectionLabel}>Main</div>
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              `${styles.navItem} ${isActive ? styles.active : ''}`
-            }
-          >
-            <IconDashboard />
-            Dashboard
-          </NavLink>
+    <>
+      <aside className={styles.sidebar}>
+        <div className={styles.brand}>
+          <img src={viteLogo} alt="" className={styles.brandMark} />
+          <span className={styles.brandName}>eSimplify</span>
         </div>
-      </nav>
 
-      <div className={styles.footer}>
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            `${styles.userRow} ${isActive ? styles.active : ''}`
-          }
-        >
-          <div className={styles.avatar}>
-            {imageUrl ? (
-              <img src={imageUrl} alt={fullName} className={styles.avatarImg} />
-            ) : (
-              <span className={styles.avatarInitials}>{initials}</span>
-            )}
+        <nav className={styles.nav}>
+          <div className={styles.navSection}>
+            <div className={styles.navSectionLabel}>Main</div>
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                `${styles.navItem} ${isActive ? styles.active : ''}`
+              }
+            >
+              <IconDashboard />
+              Dashboard
+            </NavLink>
           </div>
-          <span className={styles.footerLabel}>Profile</span>
-          <div className={styles.userInfo}>
-            <div className={styles.userName}>{fullName}</div>
-            {email && <div className={styles.userEmail}>{email}</div>}
-          </div>
-        </NavLink>
+        </nav>
 
-        <button
-          className={styles.signOutBtn}
-          onClick={() => signOut({ redirectUrl: '/' })}
-        >
-          <IconLogOut />
-          <span className={styles.footerLabel}>Sign out</span>
-        </button>
-      </div>
-    </aside>
+        <div className={styles.footer}>
+          <button
+            className={`${styles.userRow} ${menuOpen ? styles.active : ''}`}
+            onClick={() => setMenuOpen(v => !v)}
+          >
+            <div className={styles.avatar}>
+              {imageUrl ? (
+                <img src={imageUrl} alt={fullName} className={styles.avatarImg} />
+              ) : (
+                <span className={styles.avatarInitials}>{initials}</span>
+              )}
+            </div>
+            <span className={styles.footerLabel}>Profile</span>
+            <div className={styles.userInfo}>
+              <div className={styles.userName}>{fullName}</div>
+              {email && <div className={styles.userEmail}>{email}</div>}
+            </div>
+          </button>
+        </div>
+      </aside>
+
+      {menuOpen && (
+        <>
+          <div className={styles.modalBackdrop} onClick={() => setMenuOpen(false)} />
+          <div className={styles.modal}>
+            <div className={styles.modalAvatar}>
+              {imageUrl ? (
+                <img src={imageUrl} alt={fullName} className={styles.modalAvatarImg} />
+              ) : (
+                <span className={styles.modalAvatarInitials}>{initials}</span>
+              )}
+            </div>
+            <div className={styles.modalName}>{fullName}</div>
+            {email && <div className={styles.modalEmail}>{email}</div>}
+            <div className={styles.modalActions}>
+              <button className={styles.modalBtnPrimary} onClick={handleProfile}>
+                <IconUser />
+                Profile
+              </button>
+              <button className={styles.modalBtnSecondary} onClick={handleSignOut}>
+                <IconLogOut />
+                Sign out
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   )
 }
