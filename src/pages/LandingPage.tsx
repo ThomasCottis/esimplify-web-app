@@ -82,6 +82,36 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* CTA band */}
+      <div className={styles.ctaBand}>
+        <div className={styles.ctaInner}>
+          <div className={styles.ctaText}>
+            <div className={styles.ctaHeadline}>Stop juggling bills. Start with one payment.</div>
+            <div className={styles.ctaSub}>Join patients who've already simplified their healthcare billing.</div>
+          </div>
+          <SignUpButton mode="modal">
+            <button className={styles.ctaBtn}>Simplify my bills</button>
+          </SignUpButton>
+        </div>
+      </div>
+
+      {/* Family image + copy */}
+      <div className={styles.imageSection}>
+        <img src="/landing/family.jpg" alt="Family reviewing healthcare bills together" className={styles.familyImg} />
+        <div className={styles.imageCopy}>
+          <p className={styles.imageCopyEyebrow}>Why it matters</p>
+          <h2 className={styles.imageCopyHeadline}>
+            Healthcare billing shouldn't add stress to an already difficult time.
+          </h2>
+          <p className={styles.imageCopyBody}>
+            After a medical incident, patients receive a confusing mix of EOBs,
+            provider bills, and insurance statements — often for the same visit.
+            eSimplify brings everything together, explains what you actually owe,
+            and works to lower it. So you can focus on getting better.
+          </p>
+        </div>
+      </div>
+
       {/* How it works */}
       <section className={styles.steps}>
         <div className={styles.stepsInner}>
