@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage'
 import DashboardPage from './pages/DashboardPage'
 import OnboardingPage from './pages/OnboardingPage'
 import ProfilePage from './pages/ProfilePage'
+import NotFoundPage from './pages/NotFoundPage'
 import AppLoader from './components/ui/AppLoader'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -49,7 +50,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   )
