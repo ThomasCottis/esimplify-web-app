@@ -17,3 +17,7 @@
   color: var(--color-text);
   letter-spacing: -0.2px;
 }
+
+.accent {
+  color: var(--color-accent);
+}
