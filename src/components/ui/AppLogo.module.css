@@ -1,0 +1,21 @@
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mark {
+  width: 28px;
+  height: 28px;
+}
+
+.name {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  letter-spacing: -0.2px;
+}
+
+.accent {
+  color: var(--color-accent);
+}
