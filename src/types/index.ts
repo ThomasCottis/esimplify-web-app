@@ -1,7 +1,7 @@
 export interface Patient {
   id: string
   externalAuthId: string
-  email: string
+  email: string | null
   firstName: string
   lastName: string
   dateOfBirth: string

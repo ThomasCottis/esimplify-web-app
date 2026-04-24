@@ -81,6 +81,7 @@
 .footer {
   flex: 1;
   display: flex;
+  flex-direction: row;
   align-items: stretch;
   padding: 0;
   border-top: none;
@@ -96,11 +97,43 @@
   padding: var(--space-1) var(--space-2);
   border-radius: 0;
   cursor: pointer;
-  transition: background var(--transition-base);
+  transition: background var(--transition-base), color var(--transition-base);
+  text-decoration: none;
+  color: var(--sidebar-text);
 }
 
 .userRow:hover {
   background: var(--sidebar-hover-bg);
+  color: var(--color-text);
+}
+
+.userRow.active {
+  background: transparent;
+  color: var(--color-accent);
+}
+
+.signOutBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: 0;
+  cursor: pointer;
+  transition: background var(--transition-base), color var(--transition-base);
+  background: none;
+  border: none;
+  color: var(--sidebar-text);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  font-family: var(--font-sans);
+}
+
+.signOutBtn:hover {
+  background: var(--sidebar-hover-bg);
+  color: var(--color-text);
 }
 
 .avatar {
@@ -142,20 +175,7 @@
 .brandMark {
   width: 32px;
   height: 32px;
-  background: var(--violet-950);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
-}
-
-.brandMarkLetter {
-  color: #fff;
-  font-size: var(--text-md);
-  font-weight: var(--weight-bold);
-  font-family: var(--font-sans);
-  letter-spacing: -0.5px;
 }
 
 .brandName {
@@ -237,9 +257,11 @@
   }
 
   .footer {
-    padding: var(--space-4) var(--space-3);
+    flex-direction: column;
+    padding: var(--space-3);
     border-top: 1px solid var(--color-border);
     flex: unset;
+    gap: var(--space-1);
   }
 
   .userRow {
@@ -249,6 +271,36 @@
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     flex: unset;
+  }
+
+  .userRow.active {
+    background: var(--sidebar-active-bg);
+    color: var(--sidebar-active-text);
+  }
+
+  .signOutBtn {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    flex: unset;
+    font-size: var(--text-sm);
+    justify-content: flex-start;
+    color: var(--color-text-secondary);
+    width: 100%;
+  }
+
+  .signOutBtn:hover {
+    color: var(--color-text);
+  }
+
+  .signOutBtn .navIcon {
+    opacity: 0.6;
+  }
+
+  .signOutBtn:hover .navIcon {
+    opacity: 1;
   }
 
   .avatar {

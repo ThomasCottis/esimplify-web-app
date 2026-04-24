@@ -3,6 +3,7 @@ import { useAuth } from '@clerk/react'
 import LandingPage from './pages/LandingPage'
 import DashboardPage from './pages/DashboardPage'
 import OnboardingPage from './pages/OnboardingPage'
+import ProfilePage from './pages/ProfilePage'
 import AppLoader from './components/ui/AppLoader'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -37,6 +38,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
