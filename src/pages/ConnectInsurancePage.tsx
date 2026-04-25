@@ -230,6 +230,9 @@ export default function ConnectInsurancePage() {
                   <button className={styles.connectBtn} onClick={() => navigate('/dashboard')}>
                     Go to dashboard
                   </button>
+                  <button className={styles.backBtn} onClick={() => setStep('review')}>
+                    Re-authenticate
+                  </button>
                 </>
               )}
             </div>
