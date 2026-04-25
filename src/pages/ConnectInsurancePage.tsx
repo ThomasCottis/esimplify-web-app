@@ -197,24 +197,41 @@ export default function ConnectInsurancePage() {
           {/* SUCCESS */}
           {step === 'success' && (
             <div className={styles.centerState}>
-              <div className={styles.successIcon}>
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                  <circle cx="24" cy="24" r="24" fill="var(--color-success-subtle)" />
-                  <path d="M14 24l8 8 12-14" stroke="var(--color-success)" strokeWidth="3"
-                    strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-              <div className={styles.centerTitle}>Aetna connected!</div>
-              <p className={styles.centerDesc}>
-                We're importing your claims in the background. They'll appear in your
-                dashboard within a few minutes.
-              </p>
-              <button
-                className={styles.connectBtn}
-                onClick={() => navigate('/dashboard')}
-              >
-                Go to dashboard
-              </button>
+              {connection?.tokenExpired ? (
+                <>
+                  <div className={styles.errorIcon}>
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <circle cx="24" cy="24" r="24" fill="var(--color-warning-subtle, #fffbeb)" />
+                      <path d="M24 16v10M24 32v2" stroke="var(--color-warning, #d97706)" strokeWidth="3" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                  <div className={styles.centerTitle}>Re-authentication required</div>
+                  <p className={styles.centerDesc}>
+                    Your Aetna session has expired. Re-connect to continue syncing your claims.
+                  </p>
+                  <button className={styles.connectBtn} onClick={() => setStep('review')}>
+                    Re-authenticate with Aetna
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className={styles.successIcon}>
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <circle cx="24" cy="24" r="24" fill="var(--color-success-subtle)" />
+                      <path d="M14 24l8 8 12-14" stroke="var(--color-success)" strokeWidth="3"
+                        strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <div className={styles.centerTitle}>Aetna connected!</div>
+                  <p className={styles.centerDesc}>
+                    We're importing your claims in the background. They'll appear in your
+                    dashboard within a few minutes.
+                  </p>
+                  <button className={styles.connectBtn} onClick={() => navigate('/dashboard')}>
+                    Go to dashboard
+                  </button>
+                </>
+              )}
             </div>
           )}
 

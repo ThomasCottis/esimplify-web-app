@@ -139,6 +139,7 @@ export interface PayerConnectionStatus {
   connected: boolean
   lastSyncedAt?: string
   expiresAt?: string
+  tokenExpired?: boolean
 }
 
 export type ClaimStatus = 'PAID' | 'DENIED' | 'PARTIAL' | 'PENDING' | 'ADJUSTED'
