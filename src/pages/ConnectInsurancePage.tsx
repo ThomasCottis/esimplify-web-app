@@ -50,7 +50,7 @@ function ArrowLeftIcon() {
 export default function ConnectInsurancePage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { status: connectionStatus, startConnect } = usePayerConnection()
+  const { status: connectionStatus, connection, startConnect } = usePayerConnection()
 
   const [step, setStep] = useState<Step>('select')
   const [isRedirecting, setIsRedirecting] = useState(false)
