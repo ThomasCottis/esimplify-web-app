@@ -14,6 +14,15 @@ function IconDashboard() {
   )
 }
 
+function IconInsurance() {
+  return (
+    <svg className={styles.navIcon} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M9 1.5L2.5 4.5v4c0 4 2.9 6.7 6.5 7.5 3.6-.8 6.5-3.5 6.5-7.5v-4L9 1.5z" />
+      <path d="M6 9l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 function IconLogOut() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -74,6 +83,15 @@ export default function Sidebar() {
             >
               <IconDashboard />
               Dashboard
+            </NavLink>
+            <NavLink
+              to="/connect-insurance"
+              className={({ isActive }) =>
+                `${styles.navItem} ${isActive ? styles.active : ''}`
+              }
+            >
+              <IconInsurance />
+              Insurance
             </NavLink>
           </div>
         </nav>

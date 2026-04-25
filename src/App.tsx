@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage'
 import DashboardPage from './pages/DashboardPage'
 import OnboardingPage from './pages/OnboardingPage'
 import ProfilePage from './pages/ProfilePage'
+import ConnectInsurancePage from './pages/ConnectInsurancePage'
 import NotFoundPage from './pages/NotFoundPage'
 import AppLoader from './components/ui/AppLoader'
 
@@ -47,6 +48,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/connect-insurance"
+          element={
+            <ProtectedRoute>
+              <ConnectInsurancePage />
             </ProtectedRoute>
           }
         />

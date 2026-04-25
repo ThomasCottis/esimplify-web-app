@@ -6,6 +6,7 @@ import EpisodeCard from '../components/eob/EpisodeCard'
 import AppLoader from '../components/ui/AppLoader'
 import { usePatientProfile } from '../hooks/usePatientProfile'
 import { useDashboardData } from '../hooks/useDashboardData'
+import { usePayerConnection } from '../hooks/usePayerConnection'
 import styles from './DashboardPage.module.css'
 
 function fmt(amount: number): string {
@@ -21,10 +22,20 @@ function UploadIcon() {
   )
 }
 
+function InsuranceShieldIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.75">
+      <path d="M12 2L3 6.5v5c0 5 3.5 8.5 9 10 5.5-1.5 9-5 9-10v-5L12 2z" />
+      <path d="M8 12l3 3 5-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export default function DashboardPage() {
   const navigate = useNavigate()
   const { profile, isLoading: profileLoading, needsOnboarding } = usePatientProfile()
   const dashboardState = useDashboardData()
+  const { status: connectionStatus, connection } = usePayerConnection()
 
   useEffect(() => {
     if (needsOnboarding) navigate('/onboarding', { replace: true })
@@ -56,6 +67,37 @@ export default function DashboardPage() {
             Upload EOB
           </button>
         </div>
+
+        {/* Insurance connect CTA */}
+        {connectionStatus === 'disconnected' && (
+          <div className={styles.connectBanner}>
+            <div className={styles.connectBannerIcon}>
+              <InsuranceShieldIcon />
+            </div>
+            <div className={styles.connectBannerText}>
+              <div className={styles.connectBannerTitle}>Connect your insurance</div>
+              <div className={styles.connectBannerDesc}>
+                Link your Aetna account to automatically import your claims and EOBs.
+              </div>
+            </div>
+            <button
+              className={styles.connectBannerBtn}
+              onClick={() => navigate('/connect-insurance')}
+            >
+              Connect now
+            </button>
+          </div>
+        )}
+
+        {connectionStatus === 'connected' && connection?.lastSyncedAt && (
+          <div className={styles.syncedBadge}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="var(--color-success)" strokeWidth="1.5">
+              <path d="M4 7l2.5 2.5 3.5-4" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="7" cy="7" r="6" />
+            </svg>
+            Aetna synced {new Date(connection.lastSyncedAt).toLocaleDateString()}
+          </div>
+        )}
 
         {/* Stats */}
         <div className={styles.statsGrid}>

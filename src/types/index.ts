@@ -135,5 +135,11 @@ export interface ProviderBill {
   provider?: Provider
 }
 
+export interface PayerConnectionStatus {
+  connected: boolean
+  lastSyncedAt?: string
+  expiresAt?: string
+}
+
 export type ClaimStatus = 'PAID' | 'DENIED' | 'PARTIAL' | 'PENDING' | 'ADJUSTED'
 export type BillStatus = 'UNMATCHED' | 'MATCHED' | 'PAID' | 'DISPUTED'
