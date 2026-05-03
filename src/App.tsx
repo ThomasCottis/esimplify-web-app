@@ -5,6 +5,11 @@ import DashboardPage from './pages/DashboardPage'
 import OnboardingPage from './pages/OnboardingPage'
 import ProfilePage from './pages/ProfilePage'
 import ConnectInsurancePage from './pages/ConnectInsurancePage'
+import EobDetailPage from './pages/EobDetailPage'
+import EpisodeDetailPage from './pages/EpisodeDetailPage'
+import HowItWorksPage from './pages/HowItWorksPage'
+import NegotiationsPage from './pages/NegotiationsPage'
+import NegotiationDetailPage from './pages/NegotiationDetailPage'
 import NotFoundPage from './pages/NotFoundPage'
 import AppLoader from './components/ui/AppLoader'
 
@@ -56,6 +61,50 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ConnectInsurancePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/eobs/:id"
+          element={
+            <ProtectedRoute>
+              <EobDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/episodes/:id"
+          element={
+            <ProtectedRoute>
+              <EpisodeDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment-plan"
+          element={<Navigate to="/how-it-works" replace />}
+        />
+        <Route
+          path="/how-it-works"
+          element={
+            <ProtectedRoute>
+              <HowItWorksPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/negotiations"
+          element={
+            <ProtectedRoute>
+              <NegotiationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/negotiations/:id"
+          element={
+            <ProtectedRoute>
+              <NegotiationDetailPage />
             </ProtectedRoute>
           }
         />

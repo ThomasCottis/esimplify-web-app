@@ -144,3 +144,117 @@ export interface PayerConnectionStatus {
 
 export type ClaimStatus = 'PAID' | 'DENIED' | 'PARTIAL' | 'PENDING' | 'ADJUSTED'
 export type BillStatus = 'UNMATCHED' | 'MATCHED' | 'PAID' | 'DISPUTED'
+
+// ── Multi-stage EOB upload ────────────────────────────────────────────────────
+
+export interface NpiProviderCandidate {
+  npi: string
+  providerType: string
+  organizationName?: string
+  firstName?: string
+  lastName?: string
+  specialty?: string
+  phone?: string
+  addressLine1?: string
+  city?: string
+  state?: string
+  zip?: string
+}
+
+export interface EobParsedData {
+  payer: { name: string; phone?: string; website?: string }
+  provider: {
+    npi?: string
+    organizationName?: string
+    firstName?: string
+    lastName?: string
+    specialty?: string
+    phone?: string
+    city?: string
+    state?: string
+  }
+  payerClaimNumber?: string
+  patientAccountNumber?: string
+  claimType: string
+  serviceDateStart: string
+  serviceDateEnd?: string
+  totalBilled?: number
+  totalAllowed?: number
+  totalPayerPaid?: number
+  totalDeductible?: number
+  totalCopay?: number
+  totalCoinsurance?: number
+  totalNotCovered?: number
+  totalPatientOwed?: number
+  claimStatus: string
+  denialReason?: string
+  diagnoses: Array<{
+    sequence: number
+    icd10Code: string
+    description?: string
+    isPrincipal: boolean
+  }>
+  lineItems: Array<{
+    lineNumber: number
+    serviceDate?: string
+    serviceCode: string
+    serviceCodeType: string
+    description?: string
+    billedAmount?: number
+    allowedAmount?: number
+    payerPaidAmount?: number
+    deductibleAmount?: number
+    copayAmount?: number
+    coinsuranceAmount?: number
+    notCoveredAmount?: number
+    patientResponsibility?: number
+    lineStatus?: string
+  }>
+}
+
+export interface EobDraft {
+  parsedData: EobParsedData
+  providerCandidates: NpiProviderCandidate[]
+}
+
+// ── Negotiations ──────────────────────────────────────────────────────────────
+
+export interface NegotiationOffer {
+  id: string
+  amount: number
+  source: 'PATIENT' | 'PROVIDER' | 'SYSTEM'
+  status: 'PENDING' | 'DENIED' | 'ACCEPTED'
+  createdAt: string
+}
+
+export interface NegotiationSummary {
+  id: string
+  eobId: string
+  status: 'ACTIVE' | 'SETTLED' | 'WITHDRAWN' | 'FAILED'
+  minSuggested?: number
+  maxSuggested?: number
+  tacticNote?: string
+  originalAmount?: number
+  serviceDateStart?: string
+  payerClaimNumber?: string
+  providerName?: string
+  latestOffer?: {
+    amount: number
+    source: string
+    status: string
+  }
+  createdAt: string
+  updatedAt: string
+}
+
+export interface NegotiationDetail {
+  id: string
+  eobId: string
+  status: 'ACTIVE' | 'SETTLED' | 'WITHDRAWN' | 'FAILED'
+  minSuggested?: number
+  maxSuggested?: number
+  tacticNote?: string
+  createdAt: string
+  updatedAt: string
+  offers: NegotiationOffer[]
+}

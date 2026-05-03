@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DashboardLayout from '../components/layout/DashboardLayout'
 import StatCard from '../components/ui/StatCard'
-import EpisodeCard from '../components/eob/EpisodeCard'
+import EobUploadModal from '../components/eob/EobUploadModal'
 import AppLoader from '../components/ui/AppLoader'
 import { usePatientProfile } from '../hooks/usePatientProfile'
 import { useDashboardData } from '../hooks/useDashboardData'
@@ -22,6 +22,14 @@ function UploadIcon() {
   )
 }
 
+function ChevronRightIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+      <polyline points="6,3 11,8 6,13" />
+    </svg>
+  )
+}
+
 function InsuranceShieldIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.75">
@@ -34,7 +42,9 @@ function InsuranceShieldIcon() {
 export default function DashboardPage() {
   const navigate = useNavigate()
   const { profile, isLoading: profileLoading, needsOnboarding } = usePatientProfile()
-  const dashboardState = useDashboardData()
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [uploadOpen, setUploadOpen] = useState(false)
+  const dashboardState = useDashboardData(refreshKey)
   const { status: connectionStatus, connection } = usePayerConnection()
 
   useEffect(() => {
@@ -47,9 +57,9 @@ export default function DashboardPage() {
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
-  const { summary, episodes } = dashboardState.status === 'ready'
+  const { summary, episodes, eobs } = dashboardState.status === 'ready'
     ? dashboardState.data
-    : { summary: { totalOwed: 0, pendingBills: 0, episodeCount: 0, deductibleMet: 0, deductibleLimit: 0 }, episodes: [] }
+    : { summary: { totalOwed: 0, eobsWithBalance: 0, episodeCount: 0, deductibleMet: 0, deductibleLimit: 0 }, episodes: [], eobs: [] }
 
   return (
     <DashboardLayout>
@@ -62,7 +72,7 @@ export default function DashboardPage() {
               Here's a summary of your healthcare billing activity.
             </p>
           </div>
-          <button className={styles.uploadBtn}>
+          <button className={styles.uploadBtn} onClick={() => setUploadOpen(true)}>
             <UploadIcon />
             Upload EOB
           </button>
@@ -104,7 +114,7 @@ export default function DashboardPage() {
           <StatCard
             label="You Owe"
             value={fmt(summary.totalOwed)}
-            sub={`Across ${summary.pendingBills} pending bill${summary.pendingBills !== 1 ? 's' : ''}`}
+            sub={`Across ${summary.eobsWithBalance} claim${summary.eobsWithBalance !== 1 ? 's' : ''}`}
             variant="accent"
           />
           <StatCard
@@ -118,6 +128,57 @@ export default function DashboardPage() {
             sub={summary.deductibleLimit > 0 ? `of ${fmt(summary.deductibleLimit)} individual` : 'No coverage on file'}
             progress={summary.deductibleLimit > 0 ? { value: summary.deductibleMet, max: summary.deductibleLimit } : undefined}
           />
+        </div>
+
+        {/* EOBs */}
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionTitle}>Explanations of Benefits</div>
+            <div className={styles.sectionCount}>{eobs.length} claim{eobs.length !== 1 ? 's' : ''}</div>
+          </div>
+
+          {eobs.length === 0 ? (
+            <div className={styles.empty}>
+              <div className={styles.emptyIcon}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.75">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+              </div>
+              <div className={styles.emptyTitle}>No EOBs yet</div>
+              <p className={styles.emptyDesc}>
+                Upload your first EOB to see your claims here.
+              </p>
+            </div>
+          ) : (
+            eobs.map(eob => (
+              <div
+                key={eob.id}
+                className={styles.clickableRow}
+                onClick={() => navigate(`/eobs/${eob.id}`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => e.key === 'Enter' && navigate(`/eobs/${eob.id}`)}
+              >
+                <div className={styles.rowLeft}>
+                  <div className={styles.rowTitle}>{eob.claimType} Claim</div>
+                  <div className={styles.rowMeta}>
+                    {eob.serviceDateStart ? new Date(eob.serviceDateStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                    {eob.payerClaimNumber ? ` · #${eob.payerClaimNumber}` : ''}
+                  </div>
+                </div>
+                <div className={styles.rowRight}>
+                  {(eob.totalPatientOwed ?? 0) > 0 && (
+                    <span className={styles.rowBadgeBalance}>Balance Due</span>
+                  )}
+                  <span className={styles.rowAmount}>{eob.totalPatientOwed != null ? fmt(eob.totalPatientOwed) : '—'}</span>
+                  <ChevronRightIcon />
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Episodes */}
@@ -144,11 +205,40 @@ export default function DashboardPage() {
             </div>
           ) : (
             episodes.map(ep => (
-              <EpisodeCard key={ep.id} episode={ep} />
+              <div
+                key={ep.id}
+                className={styles.clickableRow}
+                onClick={() => navigate(`/episodes/${ep.id}`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => e.key === 'Enter' && navigate(`/episodes/${ep.id}`)}
+              >
+                <div className={styles.rowLeft}>
+                  <div className={styles.rowTitle}>{ep.label ?? 'Episode of Care'}</div>
+                  <div className={styles.rowMeta}>
+                    {ep.dateOfServiceStart ? new Date(ep.dateOfServiceStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                    {ep.primaryIcd10Code ? ` · ${ep.primaryIcd10Code}` : ''}
+                    {ep.eobs && ep.eobs.length > 0 ? ` · ${ep.eobs.length} EOB${ep.eobs.length !== 1 ? 's' : ''}` : ''}
+                  </div>
+                </div>
+                <div className={styles.rowRight}>
+                  <span className={styles.rowAmount}>{ep.totalPatientOwed != null ? fmt(ep.totalPatientOwed) : '—'}</span>
+                  <ChevronRightIcon />
+                </div>
+              </div>
             ))
           )}
         </div>
       </div>
+      {uploadOpen && (
+        <EobUploadModal
+          onClose={() => setUploadOpen(false)}
+          onUploaded={() => {
+            setUploadOpen(false)
+            setRefreshKey(k => k + 1)
+          }}
+        />
+      )}
     </DashboardLayout>
   )
 }

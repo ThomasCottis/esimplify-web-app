@@ -43,12 +43,39 @@ async function request<T>(
   return res.json() as Promise<T>
 }
 
+// Multipart upload — browser sets Content-Type + boundary automatically
+async function upload<T>(
+  getToken: () => Promise<string | null>,
+  path: string,
+  formData: FormData,
+): Promise<T> {
+  const token = await getToken()
+  const res = await fetch(`${BASE}${path}`, {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  })
+
+  if (!res.ok) {
+    let message = res.statusText
+    try {
+      const payload = await res.json() as { message?: string }
+      message = payload.message ?? message
+    } catch { /* ignore parse failure */ }
+    throw new ApiError(res.status, message)
+  }
+
+  if (res.status === 204) return undefined as T
+  return res.json() as Promise<T>
+}
+
 export function createApiClient(getToken: () => Promise<string | null>) {
   return {
-    get:    <T>(path: string)              => request<T>(getToken, 'GET',    path),
-    post:   <T>(path: string, body: unknown) => request<T>(getToken, 'POST',   path, body),
-    put:    <T>(path: string, body: unknown) => request<T>(getToken, 'PUT',    path, body),
-    patch:  <T>(path: string, body: unknown) => request<T>(getToken, 'PATCH',  path, body),
-    delete: <T>(path: string)              => request<T>(getToken, 'DELETE', path),
+    get:    <T>(path: string)                       => request<T>(getToken, 'GET',    path),
+    post:   <T>(path: string, body: unknown)        => request<T>(getToken, 'POST',   path, body),
+    put:    <T>(path: string, body: unknown)        => request<T>(getToken, 'PUT',    path, body),
+    patch:  <T>(path: string, body: unknown)        => request<T>(getToken, 'PATCH',  path, body),
+    delete: <T>(path: string)                       => request<T>(getToken, 'DELETE', path),
+    upload: <T>(path: string, formData: FormData)   => upload<T>(getToken, path, formData),
   }
 }

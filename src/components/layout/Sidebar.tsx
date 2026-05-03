@@ -23,6 +23,26 @@ function IconInsurance() {
   )
 }
 
+function IconNegotiations() {
+  return (
+    <svg className={styles.navIcon} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M3 9h12M3 5h8M3 13h5" strokeLinecap="round" />
+      <circle cx="14" cy="13" r="2.5" />
+      <path d="M13.3 13h1.4M14 12.3v1.4" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function IconHowItWorks() {
+  return (
+    <svg className={styles.navIcon} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="9" cy="9" r="7" />
+      <line x1="9" y1="8" x2="9" y2="12" strokeLinecap="round" />
+      <circle cx="9" cy="6" r="0.5" fill="currentColor" />
+    </svg>
+  )
+}
+
 function IconLogOut() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -92,6 +112,24 @@ export default function Sidebar() {
             >
               <IconInsurance />
               Insurance
+            </NavLink>
+            <NavLink
+              to="/negotiations"
+              className={({ isActive }) =>
+                `${styles.navItem} ${isActive ? styles.active : ''}`
+              }
+            >
+              <IconNegotiations />
+              Negotiations
+            </NavLink>
+            <NavLink
+              to="/how-it-works"
+              className={({ isActive }) =>
+                `${styles.navItem} ${isActive ? styles.active : ''}`
+              }
+            >
+              <IconHowItWorks />
+              How It Works
             </NavLink>
           </div>
         </nav>
